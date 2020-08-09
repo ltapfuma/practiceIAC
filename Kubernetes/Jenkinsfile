@@ -12,7 +12,7 @@ pipeline {
 			steps {
 				withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]){
 					sh '''
-                                                docker build -t ltapfuma/iac-bluegreen .
+                                                docker build -t moussa89/capstone-udacity .
 					'''
 				}
 			}
@@ -23,7 +23,7 @@ pipeline {
 				withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]){
 					sh '''
 						docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-                                                docker push ltapfuma/iac-bluegreen
+                                                docker push moussa89/capstone-udacity
 					'''
 				}
 			}
@@ -31,9 +31,9 @@ pipeline {
 
 		stage('Set Current kubectl Context') {
 			steps {
-				withAWS(region:'us-east-1', credentials:'aws_credentials') {
+				withAWS(region:'us-west-2', credentials:'aws_credentials') {
 					sh '''
-						kubectl config use-context arn:aws:eks:us-east-1:835432431333:cluster/OCSCluster
+						kubectl config use-context arn:aws:eks:us-west-2:486251485842:cluster/CapstoneCluster
 					'''
 				}
 			}
@@ -41,7 +41,7 @@ pipeline {
 
 		stage('Deploy Blue Container') {
 			steps {
-				withAWS(region:'us-east-1', credentials:'aws_credentials') {
+				withAWS(region:'us-west-2', credentials:'aws_credentials') {
 					sh '''
 						kubectl apply -f .kubernetes/blue_deployment.yml
 					'''
@@ -51,7 +51,7 @@ pipeline {
 
 		stage('Deploy green container') {
 			steps {
-				withAWS(region:'us-east-1', credentials:'aws_credentials') {
+				withAWS(region:'us-west-2', credentials:'aws_credentials') {
 					sh '''
 						kubectl apply -f .kubernetes/green_deployment.yml
 					'''
@@ -61,7 +61,7 @@ pipeline {
 
 		stage('Create Service Pointing to Blue Replication Controller') {
 			steps {
-				withAWS(region:'us-east-1', credentials:'aws_credentials') {
+				withAWS(region:'us-west-2', credentials:'aws_credentials') {
 					sh '''
 						kubectl apply -f .kubernetes/blue_service.yml
 					'''
@@ -77,7 +77,7 @@ pipeline {
 
 		stage('Create Service Pointing to Green Replication Controller') {
 			steps {
-				withAWS(region:'us-east-1', credentials:'aws_credentials') {
+				withAWS(region:'us-west-2', credentials:'aws_credentials') {
 					sh '''
 						kubectl apply -f .kubernetes/green_service.yml
 					'''

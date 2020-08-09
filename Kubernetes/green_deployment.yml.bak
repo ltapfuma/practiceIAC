@@ -1,0 +1,23 @@
+-----
+kind: ReplicationController
+apiVersion: v1
+metadata:
+    name: OCSClustergreen
+    labels:
+        app: OCSClustergreen
+spec:
+    replicas: 1
+    selector:
+        app: OCSClustergreen
+    template:
+        metadata:
+            labels:
+                app: OCSClustergreen
+        spec:
+            containers:
+                - name: OCSClustergreen
+                  image: ltapfuma/iac-green
+                  ports:
+                      - name: http-server
+                        containerPort: 80
+
